@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio | Ts’Min Universe{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+    <div class="hero-content">
+        <h1>Un universo de entretenimiento, tecnología, cine y bienestar en una sola plataforma.</h1>
+        <p>
+            Explora cafetería, zona gamer, zona saludable, cine interior, cine al aire libre
+            y plaza central desde una interfaz web moderna y organizada.
+        </p>
+
+        <div class="hero-actions">
+            <a href="#servicios" class="btn primary">Explorar servicios</a>
+            <a href="{{ url_for('cine') }}" class="btn secondary">Ver cartelera</a>
+        </div>
+    </div>
+
+    <!-- PANEL DERECHO OPTIMIZADO: Eliminado el cuadro redundante de la imagen -->
+    <div class="hero-panel" style="justify-content: center; position: relative;">
+        <div class="hero-stats" style="background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.1); width: 100%; margin: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+            <div>
+                <strong>{{ servicios|length }}</strong>
+                <span style="color: #ffffff; font-weight: 600;">Zonas</span>
+            </div>
+            <div>
+                <strong>{{ cartelera|length }}+</strong>
+                <span style="color: #ffffff; font-weight: 600;">Películas</span>
+            </div>
+            <div>
+                <strong style="color: var(--primary);">Web</strong>
+                <span style="color: #ffffff; font-weight: 600;">Interactiva</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="servicios">
+    <div class="section-header">
+        <h2>Servicios disponibles</h2>
+        <p>
+            Cada zona funciona como un módulo independiente conectado al sistema principal.
+        </p>
+    </div>
+
+    <div class="services-grid">
+        {% for servicio in servicios %}
+        <article class="service-card">
+            <div class="service-image">
+                <img src="{{ url_for('static', filename='img/' ~ servicio.imagen) }}" alt="{{ servicio.nombre }}">
+                <div class="service-overlay"></div>
+
+                <div class="service-title">
+                    <h3>{{ servicio.nombre }}</h3>
+                    <p>{{ servicio.marca }}</p>
+                </div>
+            </div>
+
+            <div class="service-body">
+                <p>{{ servicio.descripcion }}</p>
+
+                <div class="tags">
+                    {% for beneficio in servicio.beneficios %}
+                        <span>{{ beneficio }}</span>
+                    {% endfor %}
+                </div>
+
+                <a href="{{ url_for('servicio', servicio_id=servicio.id) }}" class="card-link">
+                    Ver detalles
+                </a>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="section dark-section">
+    <div class="section-header">
+        <h2>Películas disponibles</h2>
+        <p>
+            Reserva asientos usando una matriz organizada por filas y columnas.
+        </p>
+    </div>
+
+    <div class="movie-row">
+        {% for pelicula in cartelera %}
+        <article class="movie-mini-card">
+            <span>{{ pelicula.sala }}</span>
+            <h3>{{ pelicula.titulo }}</h3>
+            <p>{{ pelicula.genero }} · {{ pelicula.duracion }}</p>
+            <strong>{{ pelicula.hora }}</strong>
+        </article>
+        {% endfor %}
+    </div>
+
+    <div class="center">
+        <a href="{{ url_for('cine') }}" class="btn primary">Ver todas las películas</a>
+    </div>
+</section>
+
+{% endblock %}

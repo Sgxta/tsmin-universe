@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block title %}Reportes | Ts’Min Universe{% endblock %}
+
+{% block content %}
+
+<section class="page-hero small-hero">
+    <div>
+        <span class="eyebrow">Panel interno</span>
+        <h1>Reportes del sistema</h1>
+        <p>
+            Resumen general generado mediante procesamiento de datos, acumuladores,
+            conteos, cálculos de inventario y análisis de reservas.
+        </p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="stats-grid">
+        <div class="stat-card">
+            <span>Servicios</span>
+            <strong>{{ reporte.total_servicios }}</strong>
+        </div>
+
+        <div class="stat-card">
+            <span>Productos</span>
+            <strong>{{ reporte.total_productos }}</strong>
+        </div>
+
+        <div class="stat-card">
+            <span>Inventario</span>
+            <strong>{{ reporte.inventario_total }}</strong>
+        </div>
+
+        <div class="stat-card">
+            <span>Películas</span>
+            <strong>{{ reporte.total_peliculas }}</strong>
+        </div>
+
+        <div class="stat-card">
+            <span>Reservas</span>
+            <strong>{{ reporte.total_reservas }}</strong>
+        </div>
+
+        <div class="stat-card">
+            <span>Total carrito</span>
+            <strong>${{ "%.2f"|format(reporte.total_carrito) }}</strong>
+        </div>
+
+        <div class="stat-card">
+            <span>Total reservas</span>
+            <strong>${{ "%.2f"|format(reporte.total_reservas_dinero) }}</strong>
+        </div>
+
+        <div class="stat-card">
+            <span>Precio promedio</span>
+            <strong>${{ "%.2f"|format(reporte.precio_promedio) }}</strong>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-header">
+        <span class="eyebrow">Disponibilidad</span>
+        <h2>Matriz general de asientos</h2>
+        <p>
+            El cine trabaja con una matriz de 6 filas por 8 columnas para cada película.
+        </p>
+    </div>
+
+    <div class="availability-grid">
+        <div class="availability-card">
+            <span>Total de asientos del sistema</span>
+            <strong>{{ reporte.total_asientos_sistema }}</strong>
+        </div>
+
+        <div class="availability-card">
+            <span>Asientos reservados</span>
+            <strong>{{ reporte.asientos_reservados }}</strong>
+        </div>
+
+        <div class="availability-card">
+            <span>Asientos libres</span>
+            <strong>{{ reporte.asientos_libres }}</strong>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-header">
+        <span class="eyebrow">Servicios</span>
+        <h2>Resumen por zona</h2>
+    </div>
+
+    <div class="table-card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Zona</th>
+                    <th>Marca</th>
+                    <th>Productos</th>
+                    <th>Stock total</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for item in reporte.resumen_servicios %}
+                <tr>
+                    <td>{{ item.nombre }}</td>
+                    <td>{{ item.marca }}</td>
+                    <td>{{ item.productos }}</td>
+                    <td>{{ item.stock }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-header">
+        <span class="eyebrow">Análisis de productos</span>
+        <h2>Resultados del procesamiento</h2>
+    </div>
+
+    <div class="analysis-grid">
+        {% if reporte.producto_mayor %}
+        <article class="analysis-card">
+            <span>Producto más caro</span>
+            <h3>{{ reporte.producto_mayor.nombre }}</h3>
+            <p>{{ reporte.producto_mayor.servicio }} · {{ reporte.producto_mayor.tipo }}</p>
+            <strong>${{ "%.2f"|format(reporte.producto_mayor.precio) }}</strong>
+        </article>
+        {% endif %}
+
+        {% if reporte.producto_menor %}
+        <article class="analysis-card">
+            <span>Producto más económico</span>
+            <h3>{{ reporte.producto_menor.nombre }}</h3>
+            <p>{{ reporte.producto_menor.servicio }} · {{ reporte.producto_menor.tipo }}</p>
+            <strong>${{ "%.2f"|format(reporte.producto_menor.precio) }}</strong>
+        </article>
+        {% endif %}
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-header">
+        <span class="eyebrow">Reservas</span>
+        <h2>Reservas realizadas</h2>
+    </div>
+
+    {% if reservas %}
+        <div class="reservation-list">
+            {% for reserva in reservas %}
+            <article class="reservation-card">
+                <h3>{{ reserva.pelicula }}</h3>
+                <p><strong>Sala:</strong> {{ reserva.sala }}</p>
+                <p><strong>Hora:</strong> {{ reserva.hora }}</p>
+                <p><strong>Asientos:</strong> {{ reserva.asientos|join(", ") }}</p>
+                <p><strong>Total:</strong> ${{ "%.2f"|format(reserva.total) }}</p>
+            </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h2>No existen reservas registradas</h2>
+            <p>Ve a la cartelera y realiza una reserva de asientos.</p>
+            <a href="{{ url_for('cine') }}" class="btn primary">Ir al cine</a>
+        </div>
+    {% endif %}
+</section>
+
+<section class="section">
+    <div class="section-header">
+        <span class="eyebrow">Eventos</span>
+        <h2>Actividades programadas</h2>
+    </div>
+
+    <div class="event-grid">
+        {% for evento in reporte.eventos %}
+        <article class="event-card">
+            <h3>{{ evento.nombre }}</h3>
+            <p>{{ evento.zona }}</p>
+            <strong>{{ evento.hora }}</strong>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}

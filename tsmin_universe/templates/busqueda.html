@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Búsqueda | Ts’Min Universe{% endblock %}
+
+{% block content %}
+
+<section class="page-hero small-hero">
+    <div>
+        <span class="eyebrow">Recuperación de información</span>
+        <h1>Buscador general</h1>
+        <p>
+            Este módulo permite buscar productos en todas las zonas del sistema mediante un algoritmo de recorrido secuencial.
+        </p>
+    </div>
+</section>
+
+<section class="section">
+    <form action="{{ url_for('buscar') }}" method="GET" class="search-panel">
+        <div>
+            <label for="q">Buscar producto, zona o categoría</label>
+            <input type="text" id="q" name="q" placeholder="Ejemplo: café, cine, reserva, gaming..." value="{{ consulta }}">
+        </div>
+
+        <div>
+            <label for="ordenar">Ordenar resultados</label>
+            <select name="ordenar" id="ordenar">
+                <option value="" {% if ordenar_actual == "" %}selected{% endif %}>Sin ordenamiento</option>
+                <option value="precio_asc" {% if ordenar_actual == "precio_asc" %}selected{% endif %}>Precio menor a mayor</option>
+                <option value="precio_desc" {% if ordenar_actual == "precio_desc" %}selected{% endif %}>Precio mayor a menor</option>
+                <option value="stock_desc" {% if ordenar_actual == "stock_desc" %}selected{% endif %}>Mayor stock</option>
+                <option value="nombre_asc" {% if ordenar_actual == "nombre_asc" %}selected{% endif %}>Nombre A-Z</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn primary">Buscar</button>
+    </form>
+</section>
+
+<section class="section">
+    <div class="section-header">
+        <span class="eyebrow">Resultados</span>
+
+        {% if consulta %}
+            <h2>Resultados para “{{ consulta }}”</h2>
+            <p>Se encontraron {{ resultados|length }} coincidencias dentro del sistema.</p>
+        {% else %}
+            <h2>Realiza una búsqueda</h2>
+            <p>Escribe una palabra para recuperar información de productos y servicios.</p>
+        {% endif %}
+    </div>
+
+    {% if resultados %}
+        <div class="product-grid">
+            {% for producto in resultados %}
+            <article class="product-card">
+                <div>
+                    <span class="product-type">{{ producto.tipo }}</span>
+                    <h3>{{ producto.nombre }}</h3>
+                    <p><strong>Zona:</strong> {{ producto.servicio }} - {{ producto.marca }}</p>
+                    <p>Stock disponible: {{ producto.stock }}</p>
+                </div>
+
+                <div class="product-bottom">
+                    <strong>${{ "%.2f"|format(producto.precio) }}</strong>
+                    <a href="{{ url_for('servicio', servicio_id=producto.servicio_id) }}" class="btn secondary">
+                        Ver zona
+                    </a>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    {% elif consulta %}
+        <div class="empty-state">
+            <h2>No se encontraron resultados</h2>
+            <p>Intenta con otra palabra clave.</p>
+        </div>
+    {% endif %}
+</section>
+
+{% endblock %}

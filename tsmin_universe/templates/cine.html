@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Cine | Ts’Min Universe{% endblock %}
+
+{% block content %}
+
+<section class="page-hero cine-hero">
+    <div>
+        <span class="eyebrow">Mikrokosmos</span>
+        <h1>Cartelera de cine</h1>
+        <p>Consulta películas disponibles, horarios, salas y realiza una reserva de asientos.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-header">
+        <span class="eyebrow">Películas</span>
+        <h2>Funciones disponibles</h2>
+    </div>
+
+    <div class="movies-grid" style="display: flex; flex-direction: column; gap: 20px; max-width: 900px; margin: 0 auto; padding: 0 20px;">
+        {% for pelicula in cartelera %}
+        <article class="movie-card" style="display: flex; gap: 25px; background-color: #1f1f1f; padding: 20px; border-radius: 8px; align-items: center; border: 1px solid rgba(255, 255, 255, 0.1); text-align: left;">
+            
+            <!-- CONTENEDOR DEL PÓSTER LIMPIO (Sin adivinanzas ni errores 404) -->
+            <div class="movie-poster" style="flex-shrink: 0; width: 140px; height: 210px; position: relative; background-color: #2a2a2a; border-radius: 6px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+                {% if pelicula.imagen %}
+                    <img src="{{ url_for('static', filename='img/' + pelicula.imagen) }}" alt="{{ pelicula.titulo }}" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                {% endif %}
+                <span style="position: absolute; top: 10px; left: 10px; background: #e11d48; color: white; padding: 2px 6px; font-size: 11px; font-weight: bold; border-radius: 4px; z-index: 2;">{{ pelicula.clasificacion }}</span>
+            </div>
+
+            <!-- CONTENEDOR DE LA INFORMACIÓN -->
+            <div class="movie-info" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                <p class="movie-zone" style="color: #9ca3af; margin: 0 0 5px 0; font-size: 0.9rem;">{{ pelicula.zona }}</p>
+                <h3 style="margin: 0 0 12px 0; color: #ffffff; font-size: 1.5rem; font-weight: 600;">{{ pelicula.titulo }}</h3>
+
+                <ul style="list-style: none; padding: 0; margin: 0 0 15px 0; color: #d1d5db; font-size: 0.95rem;">
+                    <li style="margin-bottom: 6px;"><strong style="color: #9ca3af; inline-size: 80px; display: inline-block;">Género:</strong> {{ pelicula.genero }}</li>
+                    <li style="margin-bottom: 6px;"><strong style="color: #9ca3af; inline-size: 80px; display: inline-block;">Duración:</strong> {{ pelicula.duracion }}</li>
+                    <li style="margin-bottom: 6px;"><strong style="color: #9ca3af; inline-size: 80px; display: inline-block;">Horario:</strong> {{ pelicula.hora }}</li>
+                    <li style="margin-bottom: 6px;"><strong style="color: #9ca3af; inline-size: 80px; display: inline-block;">Sala:</strong> {{ pelicula.sala }}</li>
+                    <li style="margin-bottom: 6px;"><strong style="color: #9ca3af; inline-size: 80px; display: inline-block;">Precio:</strong> ${{ "%.2f"|format(pelicula.precio) }}</li>
+                </ul>
+
+                <div style="max-width: 200px;">
+                    <a href="{{ url_for('reserva', pelicula_id=pelicula.id) }}" class="btn primary full">
+                        Reservar asientos
+                    </a>
+                </div>
+            </div>
+
+        </article>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}

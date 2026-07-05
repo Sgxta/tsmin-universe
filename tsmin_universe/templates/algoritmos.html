@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Algoritmos | Ts’Min Universe{% endblock %}
+
+{% block content %}
+
+<section class="page-hero small-hero">
+    <div>
+        <span class="eyebrow">Programación aplicada</span>
+        <h1>Estructuras de datos y algoritmos</h1>
+        <p>
+            Esta sección evidencia cómo el proyecto utiliza listas, diccionarios, matrices,
+            búsqueda, filtrado, ordenamiento y procesamiento de información.
+        </p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-header">
+        <span class="eyebrow">Estructuras</span>
+        <h2>Estructuras de datos utilizadas</h2>
+        <p>Estas estructuras permiten organizar la información del sistema de manera clara y modular.</p>
+    </div>
+
+    <div class="structure-grid">
+        {% for item in estructuras %}
+        <article class="structure-card">
+            <h3>{{ item.estructura }}</h3>
+            <p>{{ item.uso }}</p>
+            <small>{{ item.ejemplo }}</small>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-header">
+        <span class="eyebrow">Procesos</span>
+        <h2>Algoritmos implementados</h2>
+        <p>Estos procesos permiten transformar datos en información útil para el usuario.</p>
+    </div>
+
+    <div class="table-card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Proceso</th>
+                    <th>Algoritmo</th>
+                    <th>Descripción</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for proceso in procesos %}
+                <tr>
+                    <td>{{ proceso.proceso }}</td>
+                    <td>{{ proceso.algoritmo }}</td>
+                    <td>{{ proceso.descripcion }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-header">
+        <span class="eyebrow">Análisis de datos</span>
+        <h2>Resultados obtenidos mediante procesamiento</h2>
+    </div>
+
+    <div class="analysis-grid">
+        {% if producto_mayor %}
+        <article class="analysis-card">
+            <span>Producto de mayor precio</span>
+            <h3>{{ producto_mayor.nombre }}</h3>
+            <p>{{ producto_mayor.servicio }} · {{ producto_mayor.tipo }}</p>
+            <strong>${{ "%.2f"|format(producto_mayor.precio) }}</strong>
+        </article>
+        {% endif %}
+
+        {% if producto_menor %}
+        <article class="analysis-card">
+            <span>Producto de menor precio</span>
+            <h3>{{ producto_menor.nombre }}</h3>
+            <p>{{ producto_menor.servicio }} · {{ producto_menor.tipo }}</p>
+            <strong>${{ "%.2f"|format(producto_menor.precio) }}</strong>
+        </article>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

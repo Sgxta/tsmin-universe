@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Reservar | {{ pelicula.titulo }}{% endblock %}
+
+{% block content %}
+
+<section class="page-hero small-hero">
+    <div>
+        <span class="eyebrow">{{ pelicula.sala }} · {{ pelicula.hora }}</span>
+        <h1>{{ pelicula.titulo }}</h1>
+        <p>{{ pelicula.genero }} · {{ pelicula.duracion }} · ${{ "%.2f"|format(pelicula.precio) }} por asiento</p>
+    </div>
+</section>
+
+<section class="section academic-box">
+    <span class="eyebrow">Matriz de asientos</span>
+    <h2>Representación de la sala</h2>
+    <p>
+        La disponibilidad de asientos se representa mediante una matriz de 6 filas y 8 columnas.
+        Cada posición contiene un código de asiento y un estado: libre, seleccionado u ocupado.
+    </p>
+</section>
+
+<section class="section">
+    <div class="reservation-layout">
+        <form action="{{ url_for('reserva', pelicula_id=pelicula.id) }}" method="POST" class="seat-panel" data-reserva-panel data-precio="{{ pelicula.precio }}">
+            <div class="screen">PANTALLA</div>
+
+            <div class="seat-map">
+                {% for fila in matriz_asientos %}
+                <div class="seat-row">
+                    {% for asiento in fila %}
+                    <label class="seat {{ asiento.estado }}">
+                        <input
+                            type="checkbox"
+                            name="asientos"
+                            value="{{ asiento.codigo }}"
+                            {% if asiento.estado == "ocupado" %}disabled{% endif %}
+                        >
+                        <span>{{ asiento.codigo }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="seat-legend">
+                <span><i class="free"></i> Libre</span>
+                <span><i class="selected"></i> Seleccionado</span>
+                <span><i class="busy"></i> Ocupado</span>
+            </div>
+
+            <button type="submit" class="btn primary full">Confirmar reserva</button>
+        </form>
+
+        <aside class="summary-card">
+            <span class="eyebrow">Resumen</span>
+            <h2>{{ pelicula.titulo }}</h2>
+
+            <div class="summary-line">
+                <span>Sala:</span>
+                <strong>{{ pelicula.sala }}</strong>
+            </div>
+
+            <div class="summary-line">
+                <span>Hora:</span>
+                <strong>{{ pelicula.hora }}</strong>
+            </div>
+
+            <div class="summary-line">
+                <span>Precio:</span>
+                <strong>${{ "%.2f"|format(pelicula.precio) }}</strong>
+            </div>
+
+            <div class="summary-line">
+                <span>Asientos:</span>
+                <strong id="cantidadAsientos">0</strong>
+            </div>
+
+            <div class="summary-line total-line">
+                <span>Total:</span>
+                <strong id="totalReserva">$0.00</strong>
+            </div>
+
+            <p class="note">
+                Este módulo valida que un asiento ocupado no pueda reservarse nuevamente.
+            </p>
+        </aside>
+    </div>
+</section>
+
+{% endblock %}

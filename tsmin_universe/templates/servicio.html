@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Ver detalles | {{ servicio.nombre }}{% endblock %}
+
+{% block content %}
+
+<!-- Cabecera optimizada: Imagen con 90% de visibilidad y menú flotante de alta legibilidad -->
+<section class="page-hero image-hero" style="min-height: 400px; position: relative; display: flex; align-items: center; padding: 50px max(4%, calc((100% - 1180px) / 2)); overflow: hidden;">
+    <!-- IMAGEN MEJORADA: Opacidad al 90% (0.9) para máxima nitidez de fondo -->
+    <img class="page-hero-bg" src="{{ url_for('static', filename='img/' ~ servicio.imagen) }}" alt="{{ servicio.nombre }}" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.9; z-index: 0;">
+    
+    <!-- Degradado de contraste inferior para fundir la imagen con el fondo oscuro de la página -->
+    <div class="page-hero-overlay" style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,15,25,0.4) 0%, rgba(11,15,25,0.2) 50%, #0b0f19 100%); z-index: 1;"></div>
+
+    <!-- Contenido en primer orden sobre la imagen -->
+    <div class="page-hero-content" style="position: relative; z-index: 2; width: 100%;">
+        <div style="text-align: center; margin-bottom: 28px; text-shadow: 0 2px 10px rgba(0,0,0,0.95), 0 4px 20px rgba(0,0,0,0.9);">
+            <span class="product-type" style="color: var(--gold); font-weight: 800; letter-spacing: 2px; font-size: 12px; text-transform: uppercase;">{{ servicio.marca }}</span>
+            <h1 style="font-size: 42px; margin: 4px 0 2px; color: #fff; font-weight: 800;">{{ servicio.nombre }}</h1>
+            <p style="color: #ffffff; font-size: 16px; max-width: 650px; margin: auto; line-height: 1.4; font-weight: 600;">{{ servicio.descripcion }}</p>
+        </div>
+
+        <!-- MENU DE OPCIONES FLOTANTE: Efecto Cristal Premium para no perder visibilidad ni lectura -->
+        <form method="GET" class="filter-card" style="background: rgba(11, 15, 25, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(69, 243, 255, 0.35); border-radius: 12px; padding: 24px; display: grid; grid-template-columns: 1fr 1fr auto auto; gap: 16px; align-items: end; max-width: 950px; margin: 0 auto; box-shadow: 0 20px 40px rgba(0,0,0,0.7);">
+            <div>
+                <label for="categoria" style="color: var(--primary); font-weight: 800; display: block; margin-bottom: 8px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Filtrar por categoría</label>
+                <select name="categoria" id="categoria" style="width: 100%; background: #060911; border: 1px solid rgba(69, 243, 255, 0.25); padding: 12px; color: #fff; border-radius: 6px; outline: none; font-weight: 600;">
+                    <option value="todos" {% if categoria_actual == "todos" %}selected{% endif %}>Todas las categorías</option>
+                    {% for categoria in categorias %}
+                    <option value="{{ categoria }}" {% if categoria_actual == categoria %}selected{% endif %}>
+                        {{ categoria }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="ordenar" style="color: var(--primary); font-weight: 800; display: block; margin-bottom: 8px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Ordenar información</label>
+                <select name="ordenar" id="ordenar" style="width: 100%; background: #060911; border: 1px solid rgba(69, 243, 255, 0.25); padding: 12px; color: #fff; border-radius: 6px; outline: none; font-weight: 600;">
+                    <option value="" {% if ordenar_actual == "" %}selected{% endif %}>Sin ordenamiento</option>
+                    <option value="precio_asc" {% if ordenar_actual == "precio_asc" %}selected{% endif %}>Precio menor a mayor</option>
+                    <option value="precio_desc" {% if ordenar_actual == "precio_desc" %}selected{% endif %}>Precio mayor a menor</option>
+                    <option value="stock_desc" {% if ordenar_actual == "stock_desc" %}selected{% endif %}>Mayor stock</option>
+                    <option value="nombre_asc" {% if ordenar_actual == "nombre_asc" %}selected{% endif %}>Nombre A-Z</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn primary" style="padding: 12px 24px; font-weight: 800; border-radius: 6px; height: 45px; cursor: pointer; text-transform: uppercase; font-size: 13px;">Aplicar</button>
+            <a href="{{ url_for('servicio', servicio_id=servicio.id) }}" class="btn secondary" style="padding: 12px 24px; font-weight: 800; border-radius: 6px; height: 45px; border: 1px solid rgba(255,255,255,0.2); text-transform: uppercase; font-size: 13px;">Limpiar</a>
+        </form>
+    </div>
+</section>
+
+<!-- Sección de listado de productos en la zona oscura inferior -->
+<section class="section" style="padding-top: 40px;">
+    {% if productos %}
+        <div class="product-grid">
+            {% for producto in productos %}
+            <article class="product-card" style="background: rgba(22, 30, 49, 0.9); border: 1px solid var(--line); border-radius: 8px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; min-height: 180px;">
+                <div>
+                    <span class="product-type" style="color: var(--gold); font-size: 11px; font-weight: 700; text-transform: uppercase;">{{ producto.tipo }}</span>
+                    <h3 style="color: #fff; font-size: 20px; margin: 4px 0 8px;">{{ producto.nombre }}</h3>
+                    <p style="color: var(--muted); font-size: 13.5px; margin-bottom: 12px;">Stock disponible: <strong style="color: #fff;">{{ producto.stock }}</strong></p>
+                </div>
+
+                <div class="product-bottom" style="display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: auto; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
+                    <strong style="color: var(--primary); font-size: 22px;">${{ "%.2f"|format(producto.precio) }}</strong>
+
+                    <form action="{{ url_for('agregar_carrito') }}" method="POST" class="add-form" style="display: flex; gap: 6px; align-items: center;">
+                        <input type="hidden" name="servicio_id" value="{{ servicio.id }}">
+                        <input type="hidden" name="nombre" value="{{ producto.nombre }}">
+                        <input type="hidden" name="tipo" value="{{ producto.tipo }}">
+                        <input type="hidden" name="precio" value="{{ producto.precio }}">
+
+                        <input type="number" name="cantidad" value="1" min="1" max="{{ producto.stock }}" style="width: 50px; text-align: center; padding: 6px; background: #0b0f19; border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 4px;">
+                        <button type="submit" class="btn primary" style="padding: 8px 12px; min-height: auto; font-size: 13px;">Agregar</button>
+                    </form>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state" style="padding: 30px; text-align: center;">
+            <h2 style="color: #fff;">No hay productos para este filtro</h2>
+            <p style="color: var(--muted); margin-bottom: 15px;">Prueba con otra categoría o limpia los filtros.</p>
+            <a href="{{ url_for('servicio', servicio_id=servicio.id) }}" class="btn primary">Limpiar filtros</a>
+        </div>
+    {% endif %}
+</section>
+
+<!-- Características breves al final -->
+<section class="section" style="padding-top: 0; padding-bottom: 40px;">
+    <div class="section-header" style="margin-bottom: 20px;">
+        <h2 style="font-size: 20px; color: #fff;">Características de la zona</h2>
+    </div>
+    <div class="benefits-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+        {% for beneficio in servicio.beneficios %}
+        <div class="benefit-card" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 14px; border-radius: 6px; display: flex; gap: 10px; align-items: center;">
+            <span style="color: var(--primary); font-size: 16px;">✦</span>
+            <p style="color: var(--muted); font-size: 13.5px; margin: 0;">{{ beneficio }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}

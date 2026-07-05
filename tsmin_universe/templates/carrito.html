@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Carrito | Ts’Min Universe{% endblock %}
+
+{% block content %}
+
+<section class="page-hero small-hero">
+    <div>
+        <span class="eyebrow">Pedidos</span>
+        <h1>Carrito de compras</h1>
+        <p>
+            Aquí se muestran los productos y servicios agregados desde las diferentes zonas de Ts’Min Universe.
+        </p>
+    </div>
+</section>
+
+<section class="section">
+    {% if carrito %}
+        <div class="table-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Servicio</th>
+                        <th>Producto</th>
+                        <th>Tipo</th>
+                        <th>Cantidad</th>
+                        <th>Precio unitario</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for item in carrito %}
+                    <tr>
+                        <td>{{ item.servicio }}</td>
+                        <td>{{ item.nombre }}</td>
+                        <td>{{ item.tipo }}</td>
+                        <td>{{ item.cantidad }}</td>
+                        <td>${{ "%.2f"|format(item.precio) }}</td>
+                        <td>${{ "%.2f"|format(item.precio * item.cantidad) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="cart-summary">
+            <h2>Total del pedido: ${{ "%.2f"|format(total) }}</h2>
+
+            <div class="cart-actions">
+                <form action="{{ url_for('vaciar_carrito') }}" method="POST">
+                    <button type="submit" class="btn danger">Vaciar carrito</button>
+                </form>
+
+                <a href="{{ url_for('reportes') }}" class="btn primary">Ver reporte</a>
+                <a href="{{ url_for('index') }}" class="btn secondary">Seguir comprando</a>
+            </div>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h2>Tu carrito está vacío</h2>
+            <p>
+                Explora los servicios disponibles y agrega productos o experiencias al carrito.
+            </p>
+
+            <a href="{{ url_for('index') }}" class="btn primary">Explorar servicios</a>
+        </div>
+    {% endif %}
+</section>
+
+{% endblock %}
